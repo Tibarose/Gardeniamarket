@@ -1,0 +1,47 @@
+# Gradle and Android build artifacts
+/gradle-wrapper.jar
+/.gradle/
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+/.cxx/
+
+# Flutter build outputs
+/build/
+/*.dart_tool/
+/flutter_*.log
+/*.flutter-plugins
+/*.flutter-plugins-dependencies
+
+# Flutter web build artifacts
+/web/build/
+
+# Environment and sensitive files
+.env
+*.env
+key.properties
+**/*.keystore
+**/*.jks
+
+# IDE and editor files
+/.idea/
+*.iml
+/.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.backup
+
+# Dependency directories
+/packages/
+/pubspec.lock  # Optional: Exclude if you want to ensure consistent dependency versions
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app

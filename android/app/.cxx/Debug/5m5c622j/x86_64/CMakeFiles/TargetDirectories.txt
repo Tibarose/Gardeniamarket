@@ -1,0 +1,2 @@
+C:/Users/moham/StudioProjects/Gardeniamarket/android/app/.cxx/Debug/5m5c622j/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/moham/StudioProjects/Gardeniamarket/android/app/.cxx/Debug/5m5c622j/x86_64/CMakeFiles/rebuild_cache.dir

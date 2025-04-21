@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Gardenia Market - All your services in one place">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="gardeniamarket">
+  <base href="/Gardeniamarket/">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>جاردينيا توداي</title>
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FEFCE8;
+      font-family: 'Cairo', sans-serif;
+    }
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #065F46 0%, #F59E0B 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      transition: opacity 1s ease-out, transform 0.5s ease-out;
+      direction: rtl;
+      overflow: hidden;
+    }
+    #splash.hidden {
+      opacity: 0;
+      transform: scale(1.1);
+      pointer-events: none;
+    }
+    #splash::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0 0h100v50c-25 25-50 25-75 0S0 25 0 0z"/></svg>') no-repeat bottom;
+      background-size: cover;
+      animation: subtleWave 10s infinite ease-in-out;
+    }
+    @keyframes subtleWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(20px); }
+    }
+    #splash .logo-container {
+      position: relative;
+      animation: logoFadeIn 1.2s ease-out forwards;
+    }
+    #splash .logo {
+      width: 200px;
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+      animation: logoPulse 2.5s infinite ease-in-out;
+    }
+    @keyframes logoFadeIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    #splash .text-container {
+      text-align: center;
+      margin-top: 20px;
+      animation: textFadeIn 1.5s ease-out 0.3s forwards;
+      opacity: 0;
+    }
+    @keyframes textFadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    #splash .app-name {
+      font-family: 'Cairo', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #FEFCE8;
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    #splash .tagline {
+      font-family: 'Cairo', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #E6FFF4;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 8px;
+    }
+    #splash .particle-loader {
+      position: absolute;
+      bottom: 10%;
+      display: flex;
+      gap: 15px;
+      perspective: 1000px;
+    }
+    #splash .particle-loader .particle {
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(45deg, #F59E0B, #FFF7E6);
+      border-radius: 50%;
+      animation: orbit 2s infinite ease-in-out;
+      transform-style: preserve-3d;
+    }
+    #splash .particle-loader .particle:nth-child(2) { animation-delay: 0.2s; }
+    #splash .particle-loader .particle:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes orbit {
+      0% { transform: rotateX(60deg) rotateY(0deg) translateZ(20px); opacity: 0.5; }
+      50% { transform: rotateX(60deg) rotateY(180deg) translateZ(20px); opacity: 1; }
+      100% { transform: rotateX(60deg) rotateY(360deg) translateZ(20px); opacity: 0.5; }
+    }
+    #splash .progress-bar {
+      position: absolute;
+      bottom: 5%;
+      width: 200px;
+      height: 4px;
+      background: rgba(31, 41, 55, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    #splash .progress-bar::before {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background: #F59E0B;
+      animation: progress 3s infinite ease-in-out;
+    }
+    @keyframes progress {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(200%); }
+      100% { transform: translateX(-100%); }
+    }
+    @media (max-width: 600px) {
+      #splash .logo { width: 150px; }
+      #splash .app-name { font-size: 2rem; }
+      #splash .tagline { font-size: 1rem; }
+      #splash .particle-loader { bottom: 15%; }
+      #splash .progress-bar { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+<div id="splash">
+  <div class="logo-container">
+    <img src="icons/Icon-192.png" alt="جاردينيا توداي" class="logo">
+  </div>
+  <div class="text-container">
+    <div class="app-name">جاردينيا توداي</div>
+    <div class="tagline">كل خدماتك في مكان واحد</div>
+  </div>
+  <div class="particle-loader">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="progress-bar"></div>
+</div>
+
+<script>
+  // PWA Install Prompt Handling
+  let deferredPrompt;
+  let isBeforeInstallPromptSupported = false;
+
+  // Listen for beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    isBeforeInstallPromptSupported = true;
+    console.log('beforeinstallprompt event fired, deferredPrompt:', deferredPrompt);
+  });
+
+  // Function to trigger the install prompt
+  window.triggerInstallPrompt = function() {
+    if (isBeforeInstallPromptSupported && deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        console.log('User choice:', choiceResult.outcome);
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+      });
+      return 'prompted';
+    } else {
+      console.log('PWA install prompt not supported or no deferred prompt available');
+      return 'unsupported';
+    }
+  };
+
+  // Function to check if beforeinstallprompt is supported
+  window.isInstallPromptSupported = function() {
+    // Delay to ensure beforeinstallprompt has a chance to fire
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(isBeforeInstallPromptSupported);
+      }, 1000); // Wait 1 second to allow event to fire
+    });
+  };
+
+  // Log when the app is installed
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+  });
+
+  // Ensure matchMedia is available
+  window.matchMedia = window.matchMedia || function() {
+    return {
+      matches: false,
+      addListener: function() {},
+      removeListener: function() {}
+    };
+  };
+
+  // Splash Screen Handling
+  window.addEventListener('flutter-first-frame', function () {
+    const splash = document.getElementById('splash');
+    if (splash) {
+      splash.classList.add('hidden');
+      setTimeout(() => {
+        splash.remove();
+      }, 1000); // Match transition duration
+    }
+  });
+</script>
+
+<script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
