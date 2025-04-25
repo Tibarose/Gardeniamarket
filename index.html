@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Gardenia Market - All your services in one place">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="gardeniamarket">
+  <base href="$FLUTTER_BASE_HREF">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>جاردينيا توداي</title>
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+
+  <!-- VAPID Public Key and Push Utilities -->
+  <script>
+    // Attach to window to ensure Dart can access it
+    window.VAPID_PUBLIC_KEY = 'BJpxFKoSTkM79BXFlIVkilw57nctbllWpNKNqFVTxxoltNdNPSvDMDJCdQm0bx6iWylv1mmfFNKsWsAtR_KGSuo';
+    console.log('[Push] VAPID_PUBLIC_KEY initialized: ' + window.VAPID_PUBLIC_KEY);
+
+    // Utility to convert base64url string to Uint8Array (needed for VAPID)
+    window.urlBase64ToUint8Array = function(base64String) {
+      console.log('[Push] urlBase64ToUint8Array called with: ' + base64String);
+      if (!base64String || typeof base64String !== 'string') {
+        console.error('[Push] Error: base64String is invalid or undefined');
+        throw new Error('Invalid VAPID public key: input is not a string');
+      }
+      try {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+          .replace(/\-/g, '+')
+          .replace(/_/g, '/');
+        console.log('[Push] Normalized base64 string: ' + base64);
+        const rawData = window.atob(base64);
+        console.log('[Push] Raw data length: ' + rawData.length);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        console.log('[Push] Uint8Array created: [' + outputArray.join(', ') + ']');
+        return outputArray;
+      } catch (e) {
+        console.error('[Push] Error in urlBase64ToUint8Array: ' + e);
+        throw e;
+      }
+    };
+
+    // Register the service worker for push notifications
+    async function registerPushServiceWorker() {
+      try {
+        console.log('[Push] Registering service worker...');
+        const swPath = '/firebase-messaging-sw.js'; // Load from root
+        const scope = '/'; // Set scope to root
+
+        // Unregister any existing service workers with incorrect scopes
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let reg of registrations) {
+          console.log('[Push] Existing service worker scope: ' + reg.scope);
+          await reg.unregister();
+          console.log('[Push] Unregistered service worker at scope: ' + reg.scope);
+        }
+
+        // Register the service worker with the root scope
+        const registration = await navigator.serviceWorker.register(swPath, { scope: scope });
+        console.log('[Push] Service worker registered at: ' + swPath + ' with scope: ' + registration.scope);
+
+        // Ensure Firebase Messaging SDK is available
+        if (window.firebase && window.firebase.messaging) {
+          const messaging = window.firebase.messaging();
+          messaging.useServiceWorker(registration);
+          console.log('[Push] Firebase Messaging configured to use service worker at: ' + swPath);
+
+          // Test getting the token to verify service worker functionality
+          const vapidKey = window.urlBase64ToUint8Array(window.VAPID_PUBLIC_KEY);
+          messaging.getToken({ serviceWorkerRegistration: registration, vapidKey: vapidKey })
+            .then((token) => {
+              console.log('[Push] Firebase Messaging token: ' + token);
+            })
+            .catch((error) => {
+              console.error('[Push] Error getting Firebase Messaging token: ' + error);
+            });
+        } else {
+          console.warn('[Push] Firebase Messaging not yet loaded, loading script...');
+          // Load Firebase App and Messaging scripts
+          const appScript = document.createElement('script');
+          appScript.src = 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js';
+          appScript.async = true;
+          document.head.appendChild(appScript);
+
+          const messagingScript = document.createElement('script');
+          messagingScript.src = 'https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging-compat.js';
+          messagingScript.async = true;
+          document.head.appendChild(messagingScript);
+
+          messagingScript.onload = () => {
+            if (window.firebase && window.firebase.messaging) {
+              const messaging = window.firebase.messaging();
+              messaging.useServiceWorker(registration);
+              console.log('[Push] Firebase Messaging configured to use service worker at: ' + swPath);
+
+              // Test getting the token after loading
+              const vapidKey = window.urlBase64ToUint8Array(window.VAPID_PUBLIC_KEY);
+              messaging.getToken({ serviceWorkerRegistration: registration, vapidKey: vapidKey })
+                .then((token) => {
+                  console.log('[Push] Firebase Messaging token: ' + token);
+                })
+                .catch((error) => {
+                  console.error('[Push] Error getting Firebase Messaging token: ' + error);
+                });
+            } else {
+              console.error('[Push] Firebase Messaging not available after loading script');
+            }
+          };
+        }
+
+        await navigator.serviceWorker.ready;
+        console.log('[Push] Service worker is ready');
+      } catch (e) {
+        console.error('[Push] Error registering service worker: ' + e);
+      }
+    }
+
+    // Check if service workers are supported and register
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        registerPushServiceWorker();
+      });
+    } else {
+      console.warn('[Push] Service workers are not supported in this browser');
+    }
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FEFCE8;
+      font-family: 'Cairo', sans-serif;
+    }
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #065F46 0%, #F59E0B 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      transition: opacity 1s ease-out, transform 0.5s ease-out;
+      direction: rtl;
+      overflow: hidden;
+    }
+    #splash.hidden {
+      opacity: 0;
+      transform: scale(1.1);
+      pointer-events: none;
+    }
+    #splash::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0 0h100v50c-25 25-50 25-75 0S0 25 0 0z"/></svg>') no-repeat bottom;
+      background-size: cover;
+      animation: subtleWave 10s infinite ease-in-out;
+    }
+    @keyframes subtleWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(20px); }
+    }
+    #splash .logo-container {
+      position: relative;
+      animation: logoFadeIn 1.2s ease-out forwards;
+    }
+    #splash .logo {
+      width: 200px;
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+      animation: logoPulse 2.5s infinite ease-in-out;
+    }
+    @keyframes logoFadeIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    #splash .text-container {
+      text-align: center;
+      margin-top: 20px;
+      animation: textFadeIn 1.5s ease-out 0.3s forwards;
+      opacity: 0;
+    }
+    @keyframes textFadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    #splash .app-name {
+      font-family: 'Cairo', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #FEFCE8;
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    #splash .tagline {
+      font-family: 'Cairo', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #E6FFF4;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 8px;
+    }
+    #splash .particle-loader {
+      position: absolute;
+      bottom: 10%;
+      display: flex;
+      gap: 15px;
+      perspective: 1000px;
+    }
+    #splash .particle-loader .particle {
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(45deg, #F59E0B, #FFF7E6);
+      border-radius: 50%;
+      animation: orbit 2s infinite ease-in-out;
+      transform-style: preserve-3d;
+    }
+    #splash .particle-loader .particle:nth-child(2) { animation-delay: 0.2s; }
+    #splash .particle-loader .particle:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes orbit {
+      0% { transform: rotateX(60deg) rotateY(0deg) translateZ(20px); opacity: 0.5; }
+      50% { transform: rotateX(60deg) rotateY(180deg) translateZ(20px); opacity: 1; }
+      100% { transform: rotateX(60deg) rotateY(360deg) translateZ(20px); opacity: 0.5; }
+    }
+    #splash .progress-bar {
+      position: absolute;
+      bottom: 5%;
+      width: 200px;
+      height: 4px;
+      background: rgba(31, 41, 55, 0.2);
+      borderRadius: 2px;
+      overflow: hidden;
+    }
+    #splash .progress-bar::before {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background: #F59E0B;
+      animation: progress 3s infinite ease-in-out;
+    }
+    @keyframes progress {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(200%); }
+      100% { transform: translateX(-100%); }
+    }
+    @media (max-width: 600px) {
+      #splash .logo { width: 150px; }
+      #splash .app-name { font-size: 2rem; }
+      #splash .tagline { font-size: 1rem; }
+      #splash .particle-loader { bottom: 15%; }
+      #splash .progress-bar { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+<div id="splash">
+  <div class="logo-container">
+    <img src="icons/Icon-192.png" alt="جاردينيا توداي" class="logo">
+  </div>
+  <div class="text-container">
+    <div class="app-name">جاردينيا توداي</div>
+    <div class="tagline">كل خدماتك في مكان واحد</div>
+  </div>
+  <div class="particle-loader">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="progress-bar"></div>
+</div>
+
+<script>
+  let deferredPrompt;
+  let isBeforeInstallPromptSupported = false;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    isBeforeInstallPromptSupported = true;
+    console.log('DEBUG: beforeinstallprompt event fired, deferredPrompt: ' + deferredPrompt);
+  });
+
+  window.triggerInstallPrompt = function() {
+    if (isBeforeInstallPromptSupported && deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        console.log('DEBUG: User choice: ' + choiceResult.outcome);
+        if (choiceResult.outcome === 'accepted') {
+          console.log('DEBUG: User accepted the install prompt');
+        } else {
+          console.log('DEBUG: User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+      });
+      return 'prompted';
+    } else {
+      console.log('DEBUG: PWA install prompt not supported or no deferred prompt available');
+      return 'unsupported';
+    }
+  };
+
+  // Fix for PWA install prompt error
+  window.isInstallPromptSupported = function() {
+    return isBeforeInstallPromptSupported;
+  };
+
+  window.addEventListener('appinstalled', () => {
+    console.log('DEBUG: PWA was installed');
+  });
+
+  window.matchMedia = window.matchMedia || function() {
+    return {
+      matches: false,
+      addListener: function() {},
+      removeListener: function() {}
+    };
+  };
+
+  window.addEventListener('flutter-first-frame', function () {
+    const splash = document.getElementById('splash');
+    if (splash) {
+      splash.classList.add('hidden');
+      setTimeout(() => {
+        splash.remove();
+      }, 1000);
+    }
+  });
+
+  window.testFetch = function(url) {
+    return new Promise((resolve, reject) => {
+      fetch(url, { method: 'GET' })
+        .then(response => {
+          console.log('DEBUG: testFetch response: ' + response);
+          resolve({
+            ok: response.ok,
+            status: response.status,
+            statusText: response.statusText
+          });
+        })
+        .catch(error => {
+          console.error('DEBUG: testFetch error: ' + error);
+          reject(error);
+        });
+    });
+  };
+
+  console.log('DEBUG: Base href set to: ' + document.getElementsByTagName('base')[0].href);
+</script>
+
+<script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
