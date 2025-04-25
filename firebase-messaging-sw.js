@@ -43,7 +43,7 @@ const { title, body } = payload.notification || {};
 if (title && body) {
 self.registration.showNotification(title, {
 body: body,
-icon: "https://tibarose.github.io/nottest/icons/Icon-192.png"
+icon: "https://tibarose.github.io/Gardeniamarket/Gardeniamarket/icons/Icon-192.png"  
 });
 } else {
 console.error('[Push] Invalid notification payload:', payload);
