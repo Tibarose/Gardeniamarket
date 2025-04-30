@@ -1,0 +1,35 @@
+{
+  "name": "Gardenia Today",
+  "short_name": "Gardenia Today ",
+"start_url": ".",
+"display": "standalone",
+"background_color": "#FEFCE8",
+"theme_color": "#065F46",
+"description": "كل خدماتك في مكان واحد",
+"orientation": "portrait-primary",
+"prefer_related_applications": false,
+"icons": [
+{
+"src": "/Gardeniamarket/icons/Icon-192.png",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "/Gardeniamarket/icons/Icon-512.png",
+"sizes": "512x512",
+"type": "image/png"
+},
+{
+"src": "/Gardeniamarket/icons/Icon-maskable-192.png",
+"sizes": "192x192",
+"type": "image/png",
+"purpose": "maskable"
+},
+{
+"src": "/Gardeniamarket/icons/Icon-maskable-512.png",
+"sizes": "512x512",
+"type": "image/png",
+"purpose": "maskable"
+}
+]
+}
